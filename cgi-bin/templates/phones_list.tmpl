@@ -1,21 +1,21 @@
 <div class="h_centred">
     <table class="even-odd-list">
         <tr>
-            <th><span class="sorting">ID</span></th>
-            <th><span class="sorting">Имя</span></th>
-            <th><span class="sorting">Телефон</span></th>
-            <th><span class="sorting_desc">Дата добавления<span></th>
+            <th><span class="sorting[% IF sort_by == 'id' %]_[% sort.lower %][% END %]" id="id">ID</span></th>
+            <th><span class="sorting[% IF sort_by == 'name' %]_[% sort.lower %][% END %]" id="name">Имя</span></th>
+            <th><span class="sorting[% IF sort_by == 'phone' %]_[% sort.lower %][% END %]" id="phone">Телефон</span></th>
+            <th><span class="sorting[% IF sort_by == 'created' %]_[% sort.lower %][% END %]" id="created">Дата добавления<span></th>
         </tr>
-        [%START phones%]
+        [% FOREACH phone IN phones %]
         <tr>
-            <td>[% id %]</td>
-            <td>[% name %]</td>
-            <td>[% phone %]</td>
-            <td>[% created %]</td>
+            <td>[% phone.id %]</td>
+            <td>[% phone.name %]</td>
+            <td>[% phone.phone %]</td>
+            <td>[% phone.created %]</td>
         </tr>
-        [%END phones%]
+        [% END %]
     </table>
     <div class="pagination">
-        [%INCLUDE pagination%]
+        [%# INCLUDE pagination.tmpl %]
     </div>
 </div>
