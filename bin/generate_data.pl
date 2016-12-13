@@ -12,8 +12,8 @@ use Term::ProgressBar::Simple;
 
 use constant CONFIG_FILE   => '../cgi-bin/site.conf';
 use constant MYSQL_DEBUG   => 0;
-use constant MYSQL_RECORDS => 12_000_000;
-use constant BULK_SIZE     => 1000;
+use constant MYSQL_RECORDS => 9_000_000;
+use constant BULK_SIZE     => 500;
 
 # Load config
 my %config = ParseConfig( -ConfigFile => CONFIG_FILE );
@@ -46,8 +46,15 @@ for (1 .. MYSQL_RECORDS / BULK_SIZE) {
     $progress++;
     $insert_count++;
 }
-
 print "DONE! $insert_count inserts with " . BULK_SIZE . " bulk size (total " . ($insert_count * BULK_SIZE) . " records inserted)\n";
+
+print "Altering table (create index on phone) ...";
+query($dbh, 'ALTER TABLE ' . $config{DB}{db_table} . ' ADD INDEX phone_i (phone)');
+print " DONE!\n";
+
+print "Altering table (create index on created) ...";
+query($dbh, 'ALTER TABLE ' . $config{DB}{db_table} . ' ADD INDEX created_i (created)');
+print " DONE!\n";
 
 exit 0;
 
