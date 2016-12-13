@@ -1,0 +1,18 @@
+<div class="h_centred">
+    <table class="even-odd-list">
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Телефон</th>
+            <th>Дата добавления</th>
+        </tr>
+        [%START phones%]
+        <tr>
+            <td>[% id %]</td>
+            <td>[% name %]</td>
+            <td>[% phone %]</td>
+            <td>[% created %]</td>
+        </tr>
+        [%END phones%]
+    </table>
+</div>

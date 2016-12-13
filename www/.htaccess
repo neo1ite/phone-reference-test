@@ -1,0 +1,5 @@
+RewriteEngine       On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule         ^  	        /cgi-bin/engine.pl [L]
+AddDefaultCharset   utf-8
+AddCharset          utf-8 .html .css .js
