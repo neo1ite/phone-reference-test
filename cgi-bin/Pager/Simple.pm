@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use Data::Dumper;
 
+use constant PAGING_LINE => 10;
+
 sub new {
     my ($invocant, $db, $table, $params) = @_;
     my $class = ref($invocant) || $invocant;
@@ -51,7 +53,19 @@ sub get_page {
     return if ($page > $self->pages || $page < 1);
 
     $self->{page} = $page;
-    return $self->{db}->selectall_arrayref('SELECT * ' . $self->_query_construct . ' LIMIT ' . ($page * $self->{records_per_page}) . ', ' . $self->{records_per_page}, { Slice => {} });
+    return $self->{db}->selectall_arrayref('SELECT * ' . $self->_query_construct . ' LIMIT ' . (($page - 1) * $self->{records_per_page}) . ', ' . $self->{records_per_page}, { Slice => {} });
+}
+
+sub paging {
+    my $self = shift;
+
+    my $first_page = $self->{page} - PAGING_LINE / 2;
+    my $last_page  = $self->{page} + PAGING_LINE / 2;
+    $first_page = 1            if $first_page < 1;
+    $last_page  = $self->pages if $last_page  > $self->pages;
+
+
+    return [ sort { $a <=> $b } keys { map { $_ => 0 } $first_page .. $self->{page}, $self->{page} .. $last_page } ];
 }
 
 sub pages {

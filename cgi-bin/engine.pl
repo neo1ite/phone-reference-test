@@ -36,6 +36,7 @@ my $tt = Template->new({
 print header('text/html; charset=UTF-8');
 #$tmpl->compile( 'index', 1 );
 
+my $page    = int(param('page') // 1);
 my $sort    = ((param('sort') // '') eq 'd') ? 'DESC' : 'ASC';
 my $sort_by = ((param('sort_by') // '') =~ /^(?:id|name|phone|created)$/) ? param('sort_by') : 'created';
 warn $sort_by . ' ' . $sort;
@@ -45,7 +46,7 @@ my $pager = Pager::Simple->new(
     $config{DB}{db_table},
     {
         records_per_page => 30,
-        (int(param('phone') // '') ? (condition => 'phone = ' . int(param('phone') // '')) : ()),
+        (int(param('phone') || 0) ? (condition => 'phone = ' . int(param('phone') || 0)) : ()),
         sorting => $sort_by . ' ' . $sort
     }
 );
@@ -54,8 +55,9 @@ my $pager = Pager::Simple->new(
 $tt->process(
     'index.tmpl',
     {
-        'phones'     => $pager->first_page,
-        #'pager'      => [map { {} } 1 .. 10],
+        'phones'     => $pager->get_page($page),
+        'page'       => $page,
+        'pager'      => $pager->paging($page),
         'exec_time'  => $timer->(),
         'records'    => $total_records =~ s/(\d)(?=(\d{3})+(\D|$))/$1\,/gr,
         'index_size' => $index_size,
