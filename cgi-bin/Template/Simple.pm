@@ -136,7 +136,9 @@ $code_body
 CODE
 
 #print $source ;
-
+open FHL, '>/tmp/test.log' or die "can't open file: $!";
+print FHL $source;
+close FHL;
 	my $code_ref = eval $source ;
 
 #print $@ if $@ ;

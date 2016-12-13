@@ -1,10 +1,10 @@
 <div class="h_centred">
     <table class="even-odd-list">
         <tr>
-            <th>ID</th>
-            <th>Имя</th>
-            <th>Телефон</th>
-            <th>Дата добавления</th>
+            <th><span class="sorting">ID</span></th>
+            <th><span class="sorting">Имя</span></th>
+            <th><span class="sorting">Телефон</span></th>
+            <th><span class="sorting_desc">Дата добавления<span></th>
         </tr>
         [%START phones%]
         <tr>
@@ -15,4 +15,7 @@
         </tr>
         [%END phones%]
     </table>
+    <div class="pagination">
+        [%INCLUDE pagination%]
+    </div>
 </div>

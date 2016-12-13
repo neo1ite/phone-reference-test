@@ -24,6 +24,7 @@ $DBI::Simple::DEBUG = 1;
 # Подключаемся к БД, сразу задаем верную кодировку подключения
 my $DB = DBI::Simple->new($config{DB});
 my $total_records = $DB->select('SELECT COUNT(*) FROM ' . $config{DB}{db_table});
+my $index_size    = $DB->select('SELECT ROUND(INDEX_LENGTH/1024/1024, 3) FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?', undef, [ $config{DB}{db_name}, $config{DB}{db_table} ]);
 
 my $tmpl = Template::Simple->new();
 
@@ -35,16 +36,19 @@ my $pager = Pager::Simple->new(
     $config{DB}{db_table},
     {
         records_per_page => 30,
-        (int(param('phone') // '') ? (condition => 'phone = ' . int(param('phone') // '')) : ())
+        (int(param('phone') // '') ? (condition => 'phone = ' . int(param('phone') // '')) : ()),
+        sorting => 'created DESC'
     }
 );
 
 print ${$tmpl->render(
     'index',
     {
-        phones => $pager->first_page,
-        exec_time => $timer->(),
-        records => $total_records =~ s/(\d)(?=(\d{3})+(\D|$))/$1\,/gr
+        phones     => $pager->first_page,
+        pager      => [map { {} } 1 .. 10],
+        exec_time  => $timer->(),
+        records    => $total_records =~ s/(\d)(?=(\d{3})+(\D|$))/$1\,/gr,
+        index_size => $index_size
     },
     1
 )};
